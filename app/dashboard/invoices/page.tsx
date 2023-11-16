@@ -1,3 +1,8 @@
 export default function Page() {
-    return <p>Invoices page</p>
+    return (
+        <div>
+            <a href="/dashboard/customers">Go to Customers</a>
+            <p>Welcome to Invoices!</p>
+        </div>
+    )
 }
