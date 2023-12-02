@@ -31,26 +31,6 @@ export type State = {
     message?: string | null
 }
 
-export async function authenticate(
-    prevState: string | undefined,
-    formData: FormData
-) {
-    try {
-        await signIn('credentials', formData)
-    } catch(err: any) {
-        console.log("Error signing in:", err)
-        if(err instanceof AuthError) {
-            switch (err.type) {
-                case 'CredentialsSignin':
-                    return "Invalid credentials."
-                default:
-                    return 'Something went wrong.'
-            }
-        }
-        throw err;
-    }
-}
-
 export async function createInvoice(prevState: State, formData: FormData) {
     const validatedFields = CreateInvoice.safeParse({
         customerId: formData.get('customerId'),
@@ -77,7 +57,6 @@ export async function createInvoice(prevState: State, formData: FormData) {
         console.error("Error creating invoice:", e)
     }
     
-    //revalidateAndRedirect('/dashboard/invoices');
     revalidatePath('/dashboard/invoices');
     redirect('/dashboard/invoices');
 }
@@ -117,8 +96,22 @@ export async function updateInvoice(id: string, formData: FormData) {
 
   }
 
-async function revalidateAndRedirect(path:string) {
-    console.info("REDIRECTING TO:", path)
-    revalidatePath(path);
-    redirect(path);
+  export async function authenticate(
+    prevState: string | undefined,
+    formData: FormData,
+  ) {
+    try {
+      await signIn('credentials', formData);
+    } catch (error: any) {
+      console.error(error.digest);
+      if (error instanceof AuthError) {
+        switch (error.type) {
+          case 'CredentialsSignin':
+            return 'Invalid credentials.';
+          default:
+            return 'Something went wrong.';
+        }
+      }
+      throw error;
+    }
   }
